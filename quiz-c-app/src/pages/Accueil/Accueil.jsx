@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import PopupPub from '../../components/PopupPub/PopupPub';
-import Classement from '../../components/Classement/Classement';
+import AccueilComponent from '../../components/Accueilomponent/AccueilComponent';
 
 const Accueil = () => {
   const [showPopup, setShowPopup] = useState(true);
@@ -13,7 +13,7 @@ const Accueil = () => {
   return (
     <>
       <Navbar userName={userName} niveau={niveau} score={score} />
-      <Classement/>
+      <AccueilComponent/>
       <PopupPub
         isOpen={showPopup}
         onClose={() => setShowPopup(false)}

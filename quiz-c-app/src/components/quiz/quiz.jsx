@@ -36,11 +36,11 @@ const Quiz = () => {
 
   return (
     <main className="quiz-main">
-      <div className="quiz-status-badges">
+      {/* <div className="quiz-status-badges">
         <span className="quiz-badge">OK</span>
         <span className="quiz-badge">OK</span>
         <span className="quiz-badge">OK</span>
-      </div>
+      </div> */}
 
       <div className="quiz-card">
         <div className="quiz-progress-section">

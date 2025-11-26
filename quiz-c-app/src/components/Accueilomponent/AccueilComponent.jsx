@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BookOpen, Clock, TrendingUp, Calendar, FileText, PlayCircle } from 'lucide-react';
 import './AccueilComponent.css';
 import CorrectionModal from '../Modal/CorrectionModal';
+import apiService from '../../services/api';
 
 const AccueilComponent = () => {
   const [showCorrection, setShowCorrection] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const quizHistory = [
     { id: 1, score: '12/15 (80%)', date: '20 novembre 2025', time: '18 min', status: 'good' },
     { id: 2, score: '14/15 (93%)', date: '18 novembre 2025', time: '15 min', status: 'excellent' },
     { id: 3, score: '10/15 (67%)', date: '15 novembre 2025', time: '22 min', status: 'average' }
   ];
+
+  const handleStartQuiz = async () => {
+    setLoading(true);
+    try {
+      const quiz = await apiService.generateQuiz('debutant');
+      navigate('/quiz', { state: { quiz } });
+    } catch (error) {
+      console.error('Erreur génération quiz:', error);
+      alert('Erreur lors du démarrage du quiz');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleShowCorrection = (quiz) => {
     setSelectedQuiz(quiz);
@@ -28,9 +45,13 @@ const AccueilComponent = () => {
           </div>
           <h1 className="accueil-hero-title">Quiz C — Teste tes connaissances en C</h1>
           <p className="accueil-hero-subtitle">Améliore tes compétences en programmation C avec des quiz interactifs</p>
-          <button className="accueil-hero-button">
+          <button 
+            className="accueil-hero-button"
+            onClick={handleStartQuiz}
+            disabled={loading}
+          >
             <PlayCircle size={20} />
-            Commencer un nouveau quiz
+            {loading ? 'Génération du quiz...' : 'Commencer un nouveau quiz'}
           </button>
         </div>
 
@@ -73,9 +94,13 @@ const AccueilComponent = () => {
             </div>
           </div>
 
-          <button className="accueil-start-button">
+          <button 
+            className="accueil-start-button"
+            onClick={handleStartQuiz}
+            disabled={loading}
+          >
             <PlayCircle size={22} />
-            Démarrer le quiz
+            {loading ? 'Chargement...' : 'Démarrer le quiz'}
           </button>
         </div>
 
@@ -117,7 +142,6 @@ const AccueilComponent = () => {
         </div>
       </div>
 
-      {/* Modal de correction */}
       <CorrectionModal
         isOpen={showCorrection}
         onClose={() => setShowCorrection(false)}

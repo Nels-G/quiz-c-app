@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Home.css';
+import apiService from '../../services/api';
 
 const Home = () => {
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
   const [niveau, setNiveau] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const niveaux = [
     {
@@ -30,8 +35,70 @@ const Home = () => {
     }
   ];
 
-  const handleSubmit = () => {
-    console.log({ prenom, nom, niveau });
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!prenom.trim()) {
+      newErrors.prenom = 'Le prénom est requis';
+    } else if (prenom.trim().length < 2) {
+      newErrors.prenom = 'Le prénom doit contenir au moins 2 caractères';
+    }
+
+    if (!nom.trim()) {
+      newErrors.nom = 'Le nom est requis';
+    } else if (nom.trim().length < 2) {
+      newErrors.nom = 'Le nom doit contenir au moins 2 caractères';
+    }
+
+    if (!niveau) {
+      newErrors.niveau = 'Veuillez sélectionner un niveau';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await apiService.createUserSession({
+        first_name: prenom.trim(),
+        last_name: nom.trim(),
+        level: niveau
+      });
+
+      navigate('/accueil');
+    } catch (error) {
+      console.error('Erreur:', error);
+      setErrors({ submit: 'Erreur lors du démarrage du quiz. Veuillez réessayer.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePrenomChange = (e) => {
+    setPrenom(e.target.value);
+    if (errors.prenom) {
+      setErrors(prev => ({ ...prev, prenom: '' }));
+    }
+  };
+
+  const handleNomChange = (e) => {
+    setNom(e.target.value);
+    if (errors.nom) {
+      setErrors(prev => ({ ...prev, nom: '' }));
+    }
+  };
+
+  const handleNiveauChange = (niveauId) => {
+    setNiveau(niveauId);
+    if (errors.niveau) {
+      setErrors(prev => ({ ...prev, niveau: '' }));
+    }
   };
 
   return (
@@ -54,32 +121,35 @@ const Home = () => {
               <label className="Home-label">Prénom</label>
               <input
                 type="text"
-                className="Home-input"
+                className={`Home-input ${errors.prenom ? 'Home-input--error' : ''}`}
                 placeholder="Votre prénom"
                 value={prenom}
-                onChange={(e) => setPrenom(e.target.value)}
+                onChange={handlePrenomChange}
               />
+              {errors.prenom && <span className="Home-error">{errors.prenom}</span>}
             </div>
             <div className="Home-input-wrapper">
               <label className="Home-label">Nom</label>
               <input
                 type="text"
-                className="Home-input"
+                className={`Home-input ${errors.nom ? 'Home-input--error' : ''}`}
                 placeholder="Votre nom"
                 value={nom}
-                onChange={(e) => setNom(e.target.value)}
+                onChange={handleNomChange}
               />
+              {errors.nom && <span className="Home-error">{errors.nom}</span>}
             </div>
           </div>
 
           <div className="Home-niveau-section">
             <label className="Home-label">Choisissez votre niveau</label>
+            {errors.niveau && <span className="Home-error">{errors.niveau}</span>}
             <div className="Home-niveau-options">
               {niveaux.map((n) => (
                 <div
                   key={n.id}
-                  className={`Home-niveau-card ${niveau === n.id ? 'Home-niveau-card--selected' : ''}`}
-                  onClick={() => setNiveau(n.id)}
+                  className={`Home-niveau-card ${niveau === n.id ? 'Home-niveau-card--selected' : ''} ${errors.niveau ? 'Home-niveau-card--error' : ''}`}
+                  onClick={() => handleNiveauChange(n.id)}
                 >
                   <div 
                     className="Home-niveau-icon" 
@@ -102,15 +172,27 @@ const Home = () => {
                       </svg>
                     )}
                   </div>
-                  <span className="Home-niveau-title">{n.title}</span>
-                  <span className="Home-niveau-description">{n.description}</span>
+                  <div className="Home-niveau-content">
+                    <span className="Home-niveau-title">{n.title}</span>
+                    <span className="Home-niveau-description">{n.description}</span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <button className="Home-button" onClick={handleSubmit}>
-            Commencer le Quiz
+          {errors.submit && (
+            <div className="Home-error-message">
+              {errors.submit}
+            </div>
+          )}
+
+          <button 
+            className="Home-button" 
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? 'Chargement...' : 'Commencer le Quiz'}
           </button>
         </div>
       </div>

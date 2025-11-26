@@ -307,3 +307,48 @@
     font-size: 0.75rem;
   }
 }
+
+/* Styles de validation */
+.Home-input--error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.Home-niveau-card--error {
+  border-color: #ef4444 !important;
+}
+
+.Home-error {
+  color: #ef4444;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 4px;
+  display: block;
+}
+
+.Home-error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Animation pour les erreurs */
+.Home-input, .Home-niveau-card {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .Home-error {
+    font-size: 0.75rem;
+  }
+  
+  .Home-error-message {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+  }
+}

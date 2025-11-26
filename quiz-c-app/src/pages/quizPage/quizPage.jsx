@@ -7,7 +7,7 @@ const QuizPage = () => {
   const [showPopup, setShowPopup] = useState(true);
   const [score, setScore] = useState(0);
 
-  const userName = "nels Galley";
+  const userName = "Utilisateur";
   const niveau = "Débutant";
 
   return (

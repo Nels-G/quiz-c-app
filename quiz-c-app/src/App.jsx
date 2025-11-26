@@ -12,7 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/accueil" element={<Accueil />} />
-        <Route path="/quiz-langage-c" element={<QuizPage />} />
+        <Route path="/quiz" element={<QuizPage />} />
         <Route path="/resultats" element={<ResultPage />} />
         <Route path="/classements" element={<ClassementPage />} />
       </Routes>
